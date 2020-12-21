@@ -69,7 +69,7 @@ If you set `TOTAL_NUM_SAMPLES` in `evaluation_bnn.py` to be larger than 0. Sampl
 
 Run
 ```bash
-python3 visualization.py VISU_DIR
+python3 visualization.py -d VISU_DIR --relax
 ``` 
 
 ## Citation
