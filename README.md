@@ -19,6 +19,7 @@ conda activate hplfn
 ```
 
 ## Data preprocess
+Our method works with 3 datasets:
 
 ### FlyingThings3D
 Download and unzip the "Disparity", "Disparity Occlusions", "Disparity change", "Optical flow", "Flow Occlusions" for DispNet/FlowNet2.0 dataset subsets from the [FlyingThings3D website](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html) (we used the paths from [this file](https://lmb.informatik.uni-freiburg.de/data/FlyingThings3D_subset/FlyingThings3D_subset_all_download_paths.txt), now they added torrent downloads)
@@ -27,6 +28,15 @@ Download and unzip the "Disparity", "Disparity Occlusions", "Disparity change", 
 ```bash
 python3 data_preprocess/process_flyingthings3d_subset.py --raw_data_path RAW_DATA_PATH --save_path SAVE_PATH/FlyingThings3D_subset_processed_35m --only_save_near_pts
 ```
+
+Next you need to match the camera posees from the full dataset to the subset DispNet/FlowNet2.0. Download the "Camera Data" for the full dataset from [FlyingThings3D website](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html). Then execute the following:
+```bash
+tar -xvf flyingthings3d__camera_data.tar
+# TAR_EXTRACT_PATH - directory where you extracted flyingthings3d__camera_data.tar
+python3 data_preprocess/process_flyingthings3d_subset.py --poses TAR_EXTRACT_PATH --output SAVE_PATH/FlyingThings3D_subset_processed_35m 
+```
+
+**WARNING**: some frames in the full dataset are missing the corresponding camera poses. For the list of frames refer to [POSE.txt](https://github.com/ivantishchenko/Self-Supervised_Non-Rigid_Flow_and_Ego-Motion/blob/master/data_preprocess/pose/POSE.txt). Our scripts discard these frames during pre-processing.
 
 ### KITTI Scene Flow 2015
 Download and unzip [KITTI Scene Flow Evaluation 2015](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) to directory `RAW_DATA_PATH`.
@@ -75,7 +85,6 @@ python3 visualization.py -d VISU_DIR --relax
 ## Citation
 
 If you use this code for your research, please cite our paper.
-
 
 ```
 @article{tishchenko2020self,
