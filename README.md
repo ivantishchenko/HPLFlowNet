@@ -3,10 +3,11 @@ This is the code for our [3DV 2020](http://www.3dv.org/) paper ["Self-Supervised
 
 ## Prerequisites
 Our model is trained and tested under:
-* Python 3.5.2 (testing under Python 3.6.5 also works)
-* NVIDIA GPU + CUDA CuDNN
-* PyTorch (torch == 0.4.0)
-* Numba (numba == 0.38.1)
+* Ubuntu 18.04
+* Python 3.6.4
+* NVIDIA GPUs, CUDA 10.2, CuDNN 7.6
+* PyTorch 1.5
+* Numba 0.48
 * You may need to install cffi.
 * Mayavi for visualization. 
 
