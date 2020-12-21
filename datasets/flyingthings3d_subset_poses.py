@@ -3,12 +3,14 @@ import os.path as osp
 import sys
 
 import numpy as np
+import torch
 import torch.utils.data as data
+from utils import rigidity
 
-__all__ = ['FlyingThings3DSubset']
+__all__ = ['FlyingThings3DSubsetPoses']
 
 
-class FlyingThings3DSubset(data.Dataset):
+class FlyingThings3DSubsetPoses(data.Dataset):
     """
     Args:
         train (bool): If True, creates dataset from training set, otherwise creates from test set.
@@ -21,7 +23,7 @@ class FlyingThings3DSubset(data.Dataset):
                  transform,
                  gen_func,
                  args):
-        self.root = osp.join(args.data_root, 'FlyingThings3D_subset_processed_35m')
+        self.root = osp.join(args.data_root, 'FlyingThings3D_subset_processed_35m_poses')
         self.train = train
         self.transform = transform
         self.gen_func = gen_func
@@ -37,18 +39,19 @@ class FlyingThings3DSubset(data.Dataset):
         return len(self.samples)
 
     def __getitem__(self, index):
-        pc1_loaded, pc2_loaded = self.pc_loader(self.samples[index])
-        pc1_transformed, pc2_transformed, sf_transformed = self.transform.process_inference([pc1_loaded, pc2_loaded])
-        if pc1_transformed is None:
+        pc1, pc2, R_rel, t_rel = self.pc_loader(self.samples[index])
+        pc1, pc2, R_rel, t_rel, sf_nr, sf_total = self.transform([pc1, pc2, R_rel, t_rel])
+        if pc1 is None:
             print('path {} get pc1 is None'.format(self.samples[index]), flush=True)
             index = np.random.choice(range(self.__len__()))
             return self.__getitem__(index)
 
-        pc1, pc2, sf, generated_data = self.gen_func([pc1_transformed,
-                                                      pc2_transformed,
-                                                      sf_transformed])
+        pc1, pc2, sf_nr, generated_data = self.gen_func([pc1, pc2, sf_nr], layer_num=3)
+        sf_total = sf_total.T
 
-        return pc1, pc2, np.empty(0), np.empty(0), np.empty(0), sf, generated_data, self.samples[index]
+        rot_rel = rigidity.torch_mat2euler(torch.tensor(R_rel))
+
+        return pc1, pc2, rot_rel, t_rel, sf_nr, sf_total, generated_data, self.samples[index]
 
     def __repr__(self):
         fmt_str = 'Dataset ' + self.__class__.__name__ + '\n'
@@ -69,9 +72,9 @@ class FlyingThings3DSubset(data.Dataset):
 
         try:
             if self.train:
-                assert (len(useful_paths) == 19640)
+                assert (len(useful_paths) == 19586)
             else:
-                assert (len(useful_paths) == 3824)
+                assert (len(useful_paths) == 3816)
         except AssertionError:
             print('len(useful_paths) assert error', len(useful_paths))
             sys.exit(1)
@@ -93,10 +96,19 @@ class FlyingThings3DSubset(data.Dataset):
         """
         pc1 = np.load(osp.join(path, 'pc1.npy'))
         pc2 = np.load(osp.join(path, 'pc2.npy'))
+
+        Rt_rel = np.load(osp.join(path, 'Rt_rel.npy'))
+        R_rel = Rt_rel[:3, :3]
+        t_rel = Rt_rel[:3, 3]
+
         # multiply -1 only for subset datasets
         pc1[..., -1] *= -1
         pc2[..., -1] *= -1
         pc1[..., 0] *= -1
         pc2[..., 0] *= -1
 
-        return pc1, pc2
+        # Transform R and t accordingly
+        negate_XZ = np.diag([-1, 1, -1]).astype(np.float32)
+        R_rel = np.dot(np.dot(negate_XZ, R_rel), negate_XZ)
+        t_rel = np.dot(negate_XZ, t_rel)
+        return pc1, pc2, R_rel, t_rel

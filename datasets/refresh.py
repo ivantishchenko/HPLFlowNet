@@ -1,13 +1,23 @@
+import sys
 import os
 import os.path as osp
-
 import numpy as np
+
 import torch.utils.data as data
 
-__all__ = ['KITTI']
+__all__ = ['RefRESH']
+
+VAL_SCENES = ["office3"]
+TRAIN_SCENES = ["apt0", "apt1", "apt2", "copyroom", "office0", "office1", "office2"]
+KEYFRAMES = ['keyframe_1']
+TRAIN_SIZE = 40307
+VAL_SIZE = 3720
+DIVIDE_TRAIN = 8
+DIVIDE_VAL = 4
+INPUT_SCALAR = 10.
 
 
-class KITTI(data.Dataset):
+class RefRESH(data.Dataset):
     """
     Args:
         train (bool): If True, creates dataset from training set, otherwise creates from test set.
@@ -15,22 +25,20 @@ class KITTI(data.Dataset):
         gen_func (callable):
         args:
     """
-
     def __init__(self,
                  train,
                  transform,
                  gen_func,
                  args):
-        self.root = osp.join(args.data_root, 'KITTI_processed_occ_final')
-        # Comment assert below to allow training on KITTI
-        assert train is False
+        self.root = osp.join(args.data_root, 'REFRESH_pc')
         self.train = train
         self.transform = transform
         self.gen_func = gen_func
         self.num_points = args.num_points
-        self.remove_ground = args.remove_ground
 
-        self.samples = self.make_dataset()
+        full = hasattr(args, 'full') and args.full
+        self.samples = self.make_dataset(full)
+
         if len(self.samples) == 0:
             raise (RuntimeError("Found 0 files in subfolders of: " + self.root + "\n"))
 
@@ -39,7 +47,7 @@ class KITTI(data.Dataset):
 
     def __getitem__(self, index):
         pc1_loaded, pc2_loaded = self.pc_loader(self.samples[index])
-        pc1_transformed, pc2_transformed, sf_transformed = self.transform.process_inference([pc1_loaded, pc2_loaded])
+        pc1_transformed, pc2_transformed, sf_transformed = self.transform([pc1_loaded, pc2_loaded])
         if pc1_transformed is None:
             print('path {} get pc1 is None'.format(self.samples[index]), flush=True)
             index = np.random.choice(range(self.__len__()))
@@ -55,53 +63,59 @@ class KITTI(data.Dataset):
         fmt_str = 'Dataset ' + self.__class__.__name__ + '\n'
         fmt_str += '    Number of datapoints: {}\n'.format(self.__len__())
         fmt_str += '    Number of points per point cloud: {}\n'.format(self.num_points)
-        fmt_str += '    is removing ground: {}\n'.format(self.remove_ground)
+        fmt_str += '    is training: {}\n'.format(self.train)
         fmt_str += '    Root Location: {}\n'.format(self.root)
         tmp = '    Transforms (if any): '
         fmt_str += '{0}{1}\n'.format(tmp, self.transform.__repr__().replace('\n', '\n' + ' ' * len(tmp)))
-
         return fmt_str
 
-    def make_dataset(self):
-        do_mapping = True
+    def make_dataset(self, full):
         root = osp.realpath(osp.expanduser(self.root))
+        if self.train:
+            scene_list = TRAIN_SCENES
+            expected_size = TRAIN_SIZE
+            select_scale = DIVIDE_TRAIN
+        else:
+            scene_list = VAL_SCENES
+            expected_size = VAL_SIZE
+            select_scale = DIVIDE_VAL
 
-        all_paths = sorted(os.walk(root))
-        useful_paths = [item[0] for item in all_paths if len(item[1]) == 0]
+        useful_paths = []
+        for scene in scene_list:
+            for keyframe in KEYFRAMES:
+                seq_root = osp.join(root, scene, keyframe)
+                all_paths = os.walk(seq_root)
+                useful_paths.extend(sorted([item[0] for item in all_paths if len(item[1]) == 0]))
+
         try:
-            assert (len(useful_paths) == 200)
+            assert (len(useful_paths) == expected_size)
         except AssertionError:
-            print('assert (len(useful_paths) == 200) failed!', len(useful_paths))
+            print('len(useful_paths) assert error', len(useful_paths))
+            sys.exit(1)
 
-        if do_mapping:
-            mapping_path = osp.join(osp.dirname(__file__), 'KITTI_mapping.txt')
-            print('mapping_path', mapping_path)
-
-            with open(mapping_path) as fd:
-                lines = fd.readlines()
-                lines = [line.strip() for line in lines]
-            useful_paths = [path for path in useful_paths if lines[int(osp.split(path)[-1])] != '']
-
-        res_paths = useful_paths
+        if not full:
+            res_paths = useful_paths[::select_scale]
+        else:
+            res_paths = useful_paths
 
         return res_paths
 
     def pc_loader(self, path):
         """
         Args:
-            path:
+            path: path to a dir
         Returns:
             pc1: ndarray (N, 3) np.float32
             pc2: ndarray (N, 3) np.float32
         """
-        pc1 = np.load(osp.join(path, 'pc1.npy'))  #.astype(np.float32)
-        pc2 = np.load(osp.join(path, 'pc2.npy'))  #.astype(np.float32)
+        pc1 = np.load(osp.join(path, 'pc1.npy'))
+        pc2 = np.load(osp.join(path, 'pc2.npy'))
 
-        if self.remove_ground:
-            is_ground = np.logical_and(pc1[:,1] < -1.4, pc2[:,1] < -1.4)
-            not_ground = np.logical_not(is_ground)
-
-            pc1 = pc1[not_ground]
-            pc2 = pc2[not_ground]
+        # Add X,Y axis inversion
+        pc1[..., :2] *= -1.
+        pc2[..., :2] *= -1.
+        # Scale by INPUT_SCALAR
+        pc1 *= INPUT_SCALAR
+        pc2 *= INPUT_SCALAR
 
         return pc1, pc2
