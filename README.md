@@ -4,6 +4,7 @@ This is the code for our [3DV 2020](http://www.3dv.org/) paper ["Self-Supervised
 ## Prerequisites
 Our model is trained and tested under:
 * Ubuntu 18.04
+* Conda
 * Python 3.6.4
 * NVIDIA GPUs, CUDA 10.2, CuDNN 7.6
 * PyTorch 1.5
@@ -11,17 +12,10 @@ Our model is trained and tested under:
 * You may need to install cffi.
 * Mayavi for visualization. 
 
-* Installation on Ubuntu:
+* We provide the environement in [environment.yml](https://github.com/ivantishchenko/Self-Supervised_Flow_and_Ego-Motion/blob/master/environment.yml). After installing conda run:
 ```bash
-pip3 install https://download.pytorch.org/whl/cu90/torch-0.4.0-cp35-cp35m-linux_x86_64.whl
-pip3 install numba
-pip3 install cffi
-sudo apt-get -y install python-vtk
-sudo pip3 install mayavi
-sudo apt-get install python3-pyqt5
-sudo pip3 install PyQt5
-pip3 install imageio
-pip3 install tensorboard
+conda env create -f environment.yml
+conda activate hplfn
 ```
 
 ## Data preprocess
