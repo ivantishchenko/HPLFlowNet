@@ -12,7 +12,7 @@ Our model is trained and tested under:
 * You may need to install cffi.
 * Mayavi for visualization. 
 
-* We provide the environement in [environment.yml](https://github.com/ivantishchenko/Self-Supervised_Flow_and_Ego-Motion/blob/master/environment.yml). After installing conda run:
+We provide our environement in [environment.yml](https://github.com/ivantishchenko/Self-Supervised_Flow_and_Ego-Motion/blob/master/environment.yml). After installing conda run the following commands to reproduce our environment:
 ```bash
 conda env create -f environment.yml
 conda activate hplfn
