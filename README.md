@@ -78,12 +78,11 @@ If you use this code for your research, please cite our paper.
 
 
 ```
-@inproceedings{HPLFlowNet,
-  title={HPLFlowNet: Hierarchical Permutohedral Lattice FlowNet for
-Scene Flow Estimation on Large-scale Point Clouds},
-  author={Gu, Xiuye and Wang, Yijie and Wu, Chongruo and Lee, Yong Jae and Wang, Panqu},
-  booktitle={Computer Vision and Pattern Recognition (CVPR), 2019 IEEE International Conference on},
-  year={2019}
+@article{tishchenko2020self,
+  title={Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion},
+  author={Tishchenko, Ivan and Lombardi, Sandro and Oswald, Martin R and Pollefeys, Marc},
+  journal={arXiv preprint arXiv:2009.10467},
+  year={2020}
 }
 ```
 ## Acknowledgments
