@@ -1,11 +1,15 @@
 # Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion, 3DV 2020
 This is the code for our [3DV 2020](http://www.3dv.org/) paper ["Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion"](https://arxiv.org/abs/2009.10467), a method capable of supervised, hybrid and self-supervised learning of total scene flow from a pairt of point clouds. The code is developed and maintained by [Ivan Tishchenko](https://tishchenko.me/).
 
+[[ArXiv](https://arxiv.org/abs/2009.10467)] [[Video](https://slideslive.com/38941127)]
+
 ## Citation
+If you use this code for your research, please cite our paper:
 
-If you use this code for your research, please cite our paper.
+**Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion**,
+*Tishchenko, Ivan and Lombardi, Sandro and Oswald, Martin R and Pollefeys, Marc*, International Conference on 3D Vision (3DV) 2020
 
-```
+```bibtex
 @article{tishchenko2020self,
   title={Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion},
   author={Tishchenko, Ivan and Lombardi, Sandro and Oswald, Martin R and Pollefeys, Marc},
