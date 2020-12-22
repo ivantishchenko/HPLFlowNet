@@ -7,7 +7,7 @@ This is the code for our [3DV 2020](http://www.3dv.org/) paper ["Self-Supervised
 If you use this code for your research, please cite our paper:
 
 **Self-Supervised Learning of Non-Rigid Residual Flow and Ego-Motion**,
-*Tishchenko, Ivan and Lombardi, Sandro and Oswald, Martin R and Pollefeys, Marc*, International Conference on 3D Vision (3DV) 2020
+*Ivan Tishchenko, Sandro Lombardi, Martin R. Oswald, Marc Pollefeys*, International Conference on 3D Vision (3DV) 2020
 
 ```bibtex
 @article{tishchenko2020self,
