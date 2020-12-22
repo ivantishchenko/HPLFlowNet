@@ -94,7 +94,7 @@ Current implementation only supports `batch_size=1`.
 ### Visualization
 If you set `TOTAL_NUM_SAMPLES` in `evaluation_bnn.py` to be larger than 0. Sampled results will be saved in a subdir of your checkpoint directory, `VISU_DIR`.
 
-Run
+Use the following script to visualize:
 ```bash
 python visualization.py -d VISU_DIR --relax
 ``` 
