@@ -53,7 +53,7 @@ tar -xvf flyingthings3d__camera_data.tar
 python data_preprocess/process_flyingthings3d_subset.py --poses TAR_EXTRACT_PATH --output SAVE_PATH/FlyingThings3D_subset_processed_35m 
 ```
 
-**WARNING**: some frames in the full dataset are missing the corresponding camera poses. For the list of frames refer to [POSE.txt](https://github.com/ivantishchenko/Self-Supervised_Non-Rigid_Flow_and_Ego-Motion/blob/master/data_preprocess/pose/POSE.txt). Our scripts discard these frames during pre-processing.
+**WARNING**: some frames in the full dataset are missing the corresponding camera poses. For the list of invalid frames refer to [POSE.txt](https://github.com/ivantishchenko/Self-Supervised_Non-Rigid_Flow_and_Ego-Motion/blob/master/data_preprocess/pose/POSE.txt). Our scripts discard these frames during pre-processing.
 
 ### KITTI Scene Flow 2015
 Download and unzip [KITTI Scene Flow Evaluation 2015](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) to directory `RAW_DATA_PATH`.
