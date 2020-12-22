@@ -43,14 +43,14 @@ Download and unzip the "Disparity", "Disparity Occlusions", "Disparity change", 
 . They will be upzipped into the same directory, `RAW_DATA_PATH`. Then run the following script for 3D reconstruction:
 
 ```bash
-python3 data_preprocess/process_flyingthings3d_subset.py --raw_data_path RAW_DATA_PATH --save_path SAVE_PATH/FlyingThings3D_subset_processed_35m --only_save_near_pts
+python data_preprocess/process_flyingthings3d_subset.py --raw_data_path RAW_DATA_PATH --save_path SAVE_PATH/FlyingThings3D_subset_processed_35m --only_save_near_pts
 ```
 
 Next you need to match the camera posees from the full dataset to the subset DispNet/FlowNet2.0. Download the "Camera Data" for the full dataset from [FlyingThings3D website](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html). Then execute the following:
 ```bash
 tar -xvf flyingthings3d__camera_data.tar
 # TAR_EXTRACT_PATH - directory where you extracted flyingthings3d__camera_data.tar
-python3 data_preprocess/process_flyingthings3d_subset.py --poses TAR_EXTRACT_PATH --output SAVE_PATH/FlyingThings3D_subset_processed_35m 
+python data_preprocess/process_flyingthings3d_subset.py --poses TAR_EXTRACT_PATH --output SAVE_PATH/FlyingThings3D_subset_processed_35m 
 ```
 
 **WARNING**: some frames in the full dataset are missing the corresponding camera poses. For the list of frames refer to [POSE.txt](https://github.com/ivantishchenko/Self-Supervised_Non-Rigid_Flow_and_Ego-Motion/blob/master/data_preprocess/pose/POSE.txt). Our scripts discard these frames during pre-processing.
@@ -60,7 +60,7 @@ Download and unzip [KITTI Scene Flow Evaluation 2015](http://www.cvlibs.net/down
 Run the following script for 3D reconstruction:
 
 ```bash
-python3 data_preprocess/process_kitti.py RAW_DATA_PATH SAVE_PATH/KITTI_processed_occ_final
+python data_preprocess/process_kitti.py RAW_DATA_PATH SAVE_PATH/KITTI_processed_occ_final
 ```
 
 ### RefRESH
@@ -68,25 +68,25 @@ Download ZIPs of all scenes from [RefRESH Google doc](https://drive.google.com/d
 Unzip all of the scenes into the same directory, `RAW_DATA_PATH`. Then run the following script for 3D reconstruction:
 
 ```bash
-python3 data_preprocess/process_refresh_rigidity.py --raw_data_path RAW_DATA_PATH --save_path SAVE_PATH/REFRESH_pc --only_save_near_pts
+python data_preprocess/process_refresh_rigidity.py --raw_data_path RAW_DATA_PATH --save_path SAVE_PATH/REFRESH_pc --only_save_near_pts
 ```
 
 ## Get started
 Setup:
 ```bash
-cd models; python3 build_khash_cffi.py; cd ..
+cd models; python build_khash_cffi.py; cd ..
 ```
 
 ### Train
 Set `data_root` in the configuration file to `SAVE_PATH` in the data preprocess section. Then run
 ```bash
-python3 main.py configs/train_xxx.yaml
+python main.py configs/train_xxx.yaml
 ```
 
 ### Test
 Set `data_root` in the configuration file to `SAVE_PATH` in the data preprocess section. Set `resume` to be the path of your trained model or our trained model in `trained_models`. Then run
 ```bash
-python3 main.py configs/test_xxx.yaml
+python main.py configs/test_xxx.yaml
 ```
 
 Current implementation only supports `batch_size=1`.
@@ -96,7 +96,7 @@ If you set `TOTAL_NUM_SAMPLES` in `evaluation_bnn.py` to be larger than 0. Sampl
 
 Run
 ```bash
-python3 visualization.py -d VISU_DIR --relax
+python visualization.py -d VISU_DIR --relax
 ``` 
 
 ## Acknowledgments
